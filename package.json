@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@better-auth/mongo-adapter": "^1.7.7",
+    "@icons-pack/react-simple-icons": "^13.15.1",
     "better-auth": "^1.7.7",
     "mongodb": "^7.7.0",
     "next": "16.4.0",

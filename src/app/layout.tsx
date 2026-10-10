@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Hind_Siliguri } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/shared/Navbar";
+import { Toaster } from "react-hot-toast";
 
 const hindSiliguri = Hind_Siliguri({
   subsets: ["latin","bengali"],
@@ -22,6 +23,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         <Navbar />
       {children}
+            <Toaster position="top-center" />
+
       </body>
     </html>
   );

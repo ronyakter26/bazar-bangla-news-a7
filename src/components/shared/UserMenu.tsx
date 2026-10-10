@@ -31,13 +31,13 @@ const { data: session, isPending } = authClient.useSession();
     return (
       <div className="flex items-center gap-2">
         <Link
-          href="/signin"
+          href="/sign-in"
           className="btn btn-ghost btn-xs sm:btn-sm md:btn-md font-medium"
         >
           সাইন ইন
         </Link>
         <Link
-          href="/signup"
+          href="/sign-up"
           className="btn btn-emerald text-white bg-emerald-600 hover:bg-emerald-700 btn-xs sm:btn-sm md:btn-md font-medium"
         >
           সাইন আপ
