@@ -8,6 +8,7 @@ import { usePathname } from "next/navigation";
 import UserMenu from "./UserMenu";
 import PriceTicker from "./PriceTicker";
 
+
 interface Category {
   id: string;
   slug: string;
