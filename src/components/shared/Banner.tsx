@@ -43,7 +43,7 @@ const Banner = () => {
               priority
               height={320}
               width={320}
-              src={"/public/bazar-hero.png"}
+              src="/bazar-hero.png"
               alt="Bazar Hero Banner"
             />
           </div>
