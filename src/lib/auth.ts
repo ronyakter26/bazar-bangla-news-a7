@@ -11,7 +11,13 @@ if (!mongoUrl) {
 
 const client = new MongoClient(mongoUrl);
 const db = client.db("better-auth");
+
 export const auth = betterAuth({
+  trustedOrigins: [
+    "https://bazar-bangla-news-a7-qtvu.vercel.app",
+    "http://localhost:3000",
+  ],
+
   emailAndPassword: {
     enabled: true,
   },
