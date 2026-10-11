@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 
 const Banner = () => {
@@ -30,9 +32,18 @@ const Banner = () => {
 
             {/* Action Button */}
             <div className="pt-2">
-              <button className="rounded-xl bg-[#047C37] text-white px-5 py-2.5 text-sm font-semibold shadow hover:bg-[#03632C] transition-colors">
-                সব পণ্য দেখুন
-              </button>
+              <button
+  onClick={() => {
+    document.getElementById("সব-পণ্য")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }}
+  className="rounded-xl bg-[#047C37] text-white px-5 py-2.5 text-sm font-semibold shadow hover:bg-[#03632C] transition-colors"
+>
+  সব পণ্য দেখুন
+</button>
+              
             </div>
           </div>
 

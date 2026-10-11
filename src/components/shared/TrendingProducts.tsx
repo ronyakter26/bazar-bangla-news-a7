@@ -109,14 +109,12 @@ export default function TrendingProducts() {
       {/* Section A — আজ দাম বেড়েছে */}
       <section>
         <div className="mb-6 flex items-center gap-3">
-          <span className="text-2xl text-green-600">▲</span>
+            <span className="text-2xl text-red-600">▲</span>
           <div>
             <h2 className="text-xl font-bold text-gray-900">
               আজ দাম বেড়েছে
             </h2>
-            <p className="mt-1 text-sm text-gray-500">
-              সবচেয়ে বেশি দাম বেড়েছে এমন ৬টি পণ্য
-            </p>
+            
           </div>
         </div>
 
@@ -136,14 +134,11 @@ export default function TrendingProducts() {
       {/* Section B — আজ দাম কমেছে */}
       <section>
         <div className="mb-6 flex items-center gap-3">
-          <span className="text-2xl text-red-600">▼</span>
+            <span className="text-2xl text-green-600">▼</span>
           <div>
             <h2 className="text-xl font-bold text-gray-900">
               আজ দাম কমেছে
             </h2>
-            <p className="mt-1 text-sm text-gray-500">
-              সবচেয়ে বেশি দাম কমেছে এমন ৬টি পণ্য
-            </p>
           </div>
         </div>
 
@@ -161,7 +156,7 @@ export default function TrendingProducts() {
       </section>
 
       {/* Section C — সব পণ্য */}
-      <section id="সব-পণ্য" className="scroll-mt-28 pt-4">
+      <section id="সব-পণ্য" className="scroll-mt-40 pt-4">
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="text-2xl font-bold text-gray-900">
