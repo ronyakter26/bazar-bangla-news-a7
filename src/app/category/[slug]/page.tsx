@@ -53,9 +53,9 @@ export default function CategoryPage() {
         );
 
         if (!foundCategory) {
-          setError(true);
-          return;
-        }
+  window.location.replace("/not-found");
+  return;
+}
 
         setCategory(foundCategory);
         setProducts(productData);

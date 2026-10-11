@@ -1,15 +1,15 @@
-
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import toast from "react-hot-toast";
 import { SiGoogle, SiGithub } from "@icons-pack/react-simple-icons";
 
 export default function SignUpPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -17,6 +17,18 @@ export default function SignUpPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState("");
+
+  useEffect(() => {
+    if (searchParams.get("reason") === "auth-required") {
+      toast.error("পণ্য দেখতে আগে সাইন ইন করুন!", {
+        duration: 5000,
+        position: "top-center",
+      });
+
+      // একই toast বারবার না দেখানোর জন্য URL পরিষ্কার করা
+      window.history.replaceState(null, "", "/sign-up");
+    }
+  }, [searchParams]);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -47,14 +59,11 @@ export default function SignUpPage() {
       });
 
       if (result.error) {
-        toast.error(
-          result.error.message || "অ্যাকাউন্ট তৈরি করা যায়নি"
-        );
+        toast.error(result.error.message || "অ্যাকাউন্ট তৈরি করা যায়নি");
         return;
       }
 
       toast.success("অ্যাকাউন্ট তৈরি হয়েছে! এবার সাইন ইন করুন।");
-
       router.push("/sign-in");
       router.refresh();
     } catch {
@@ -64,9 +73,7 @@ export default function SignUpPage() {
     }
   }
 
-  async function handleSocialLogin(
-    provider: "google" | "github"
-  ) {
+  async function handleSocialLogin(provider: "google" | "github") {
     setSocialLoading(provider);
 
     try {
@@ -76,9 +83,7 @@ export default function SignUpPage() {
       });
 
       if (result.error) {
-        toast.error(
-          result.error.message || "Social login ব্যর্থ হয়েছে"
-        );
+        toast.error(result.error.message || "Social login ব্যর্থ হয়েছে");
         setSocialLoading("");
       }
     } catch {
@@ -93,7 +98,6 @@ export default function SignUpPage() {
         <h2 className="text-2xl font-bold text-slate-900">
           অ্যাকাউন্ট তৈরি করুন
         </h2>
-
         <p className="mt-2 text-sm text-slate-500">
           বিনা খরচে সাইন আপ করে সব বিস্তারিত দাম দেখুন।
         </p>
@@ -102,13 +106,9 @@ export default function SignUpPage() {
       <div className="w-full max-w-[500px] rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label
-              htmlFor="name"
-              className="mb-2 block text-sm font-medium text-slate-800"
-            >
+            <label htmlFor="name" className="mb-2 block text-sm font-medium text-slate-800">
               নাম
             </label>
-
             <input
               id="name"
               type="text"
@@ -122,13 +122,9 @@ export default function SignUpPage() {
           </div>
 
           <div>
-            <label
-              htmlFor="email"
-              className="mb-2 block text-sm font-medium text-slate-800"
-            >
+            <label htmlFor="email" className="mb-2 block text-sm font-medium text-slate-800">
               ইমেইল
             </label>
-
             <input
               id="email"
               type="email"
@@ -142,13 +138,9 @@ export default function SignUpPage() {
           </div>
 
           <div>
-            <label
-              htmlFor="password"
-              className="mb-2 block text-sm font-medium text-slate-800"
-            >
+            <label htmlFor="password" className="mb-2 block text-sm font-medium text-slate-800">
               পাসওয়ার্ড
             </label>
-
             <input
               id="password"
               type="password"
@@ -163,13 +155,9 @@ export default function SignUpPage() {
           </div>
 
           <div>
-            <label
-              htmlFor="confirmPassword"
-              className="mb-2 block text-sm font-medium text-slate-800"
-            >
+            <label htmlFor="confirmPassword" className="mb-2 block text-sm font-medium text-slate-800">
               পাসওয়ার্ড নিশ্চিত করুন
             </label>
-
             <input
               id="confirmPassword"
               type="password"
@@ -187,9 +175,7 @@ export default function SignUpPage() {
             disabled={loading || !!socialLoading}
             className="flex w-full items-center justify-center rounded-lg bg-emerald-700 px-4 py-3 text-sm font-bold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {loading
-              ? "অ্যাকাউন্ট তৈরি হচ্ছে..."
-              : "অ্যাকাউন্ট তৈরি করুন"}
+            {loading ? "অ্যাকাউন্ট তৈরি হচ্ছে..." : "অ্যাকাউন্ট তৈরি করুন"}
           </button>
         </form>
 
@@ -199,7 +185,6 @@ export default function SignUpPage() {
           <div className="h-px flex-1 bg-slate-200" />
         </div>
 
-        {/* Google ও GitHub buttons */}
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <button
             type="button"
@@ -208,11 +193,7 @@ export default function SignUpPage() {
             className="flex min-w-0 items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-slate-300 bg-white px-2 py-3 text-sm font-bold text-slate-900 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
           >
             <SiGoogle size={20} color="#4285F4" />
-            <span>
-              {socialLoading === "google"
-                ? "অপেক্ষা করুন..."
-                : "Google দিয়ে চালিয়ে যান"}
-            </span>
+            <span>{socialLoading === "google" ? "অপেক্ষা করুন..." : "Google দিয়ে চালিয়ে যান"}</span>
           </button>
 
           <button
@@ -222,20 +203,13 @@ export default function SignUpPage() {
             className="flex min-w-0 items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-slate-300 bg-white px-2 py-3 text-sm font-bold text-slate-900 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
           >
             <SiGithub size={20} color="#181717" />
-            <span>
-              {socialLoading === "github"
-                ? "অপেক্ষা করুন..."
-                : "GitHub দিয়ে চালিয়ে যান"}
-            </span>
+            <span>{socialLoading === "github" ? "অপেক্ষা করুন..." : "GitHub দিয়ে চালিয়ে যান"}</span>
           </button>
         </div>
 
         <p className="mt-5 text-center text-sm text-slate-600">
           অ্যাকাউন্ট আছে?{" "}
-          <Link
-            href="/sign-in"
-            className="font-bold text-emerald-700 hover:underline"
-          >
+          <Link href="/sign-in" className="font-bold text-emerald-700 hover:underline">
             সাইন ইন করুন
           </Link>
         </p>

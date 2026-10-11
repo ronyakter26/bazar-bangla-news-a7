@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 
@@ -40,21 +40,23 @@ const unitNames: Record<string, string> = {
 
 export default function ProductDetailsPage() {
   const params = useParams<{ slug: string }>();
-  const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
 
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [notFoundProduct, setNotFoundProduct] = useState(false);
 
+  // Sign in না থাকলে Sign-up page-এ পাঠাবে
   useEffect(() => {
     if (isPending) return;
 
     if (!session) {
-      router.replace("/sign-up");
+      window.location.href = "/sign-up?reason=auth-required";
     }
-  }, [isPending, session, router]);
+  }, [isPending, session]);
 
+  // Product data fetch
   useEffect(() => {
     if (isPending || !session || !params.slug) return;
 
@@ -64,6 +66,8 @@ export default function ProductDetailsPage() {
       try {
         setLoading(true);
         setError("");
+        setNotFoundProduct(false);
+        setProduct(null);
 
         const response = await fetch(
           "https://api.api-store.workers.dev/api/bazardor/products"
@@ -87,15 +91,22 @@ export default function ProductDetailsPage() {
           (item) => item.slug === params.slug
         );
 
+        if (cancelled) return;
+
         if (!found) {
-          throw new Error("এই পণ্যটি পাওয়া যায়নি");
+          setNotFoundProduct(true);
+          return;
         }
 
-        if (!cancelled) setProduct(found);
+        setProduct(found);
       } catch {
-        if (!cancelled) setError("পণ্যের তথ্য পাওয়া যায়নি।");
+        if (!cancelled) {
+          setError("পণ্যের তথ্য লোড করা যায়নি।");
+        }
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
     }
 
@@ -106,7 +117,7 @@ export default function ProductDetailsPage() {
     };
   }, [isPending, session, params.slug]);
 
-  if (isPending || (!session && !isPending)) {
+  if (isPending || !session) {
     return (
       <div className="py-20 text-center text-gray-500">
         লগইন যাচাই করা হচ্ছে...
@@ -116,9 +127,42 @@ export default function ProductDetailsPage() {
 
   if (loading) {
     return (
-      <div className="py-20 text-center text-gray-500">
-        পণ্যের তথ্য লোড হচ্ছে...
+      <div className="mx-auto max-w-5xl px-4 py-16">
+        <div className="animate-pulse space-y-5">
+          <div className="h-8 w-48 rounded bg-gray-200" />
+          <div className="h-40 rounded-2xl bg-gray-200" />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            {Array.from({ length: 3 }).map((_, index) => (
+              <div
+                key={index}
+                className="h-28 rounded-xl bg-gray-200"
+              />
+            ))}
+          </div>
+        </div>
       </div>
+    );
+  }
+
+  if (notFoundProduct) {
+    return (
+      <main className="flex min-h-[70vh] flex-col items-center justify-center px-4 text-center">
+        <h1 className="text-7xl font-bold text-emerald-700">
+          404
+        </h1>
+        <h2 className="mt-4 text-2xl font-semibold text-gray-900">
+          পণ্যটি খুঁজে পাওয়া যায়নি!
+        </h2>
+        <p className="mt-2 text-gray-500">
+          আপনি যে পণ্যটি খুঁজছেন, সেটি পাওয়া যাচ্ছে না।
+        </p>
+        <Link
+          href="/"
+          className="mt-6 rounded-lg bg-emerald-700 px-6 py-3 font-semibold text-white transition hover:bg-emerald-800"
+        >
+          হোম পেজে ফিরে যান
+        </Link>
+      </main>
     );
   }
 
@@ -126,7 +170,7 @@ export default function ProductDetailsPage() {
     return (
       <main className="mx-auto max-w-5xl px-4 py-16 text-center">
         <h1 className="text-2xl font-bold text-gray-800">
-          {error || "পণ্য পাওয়া যায়নি"}
+          {error || "পণ্যের তথ্য পাওয়া যায়নি।"}
         </h1>
         <Link
           href="/"
@@ -169,7 +213,6 @@ export default function ProductDetailsPage() {
           <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-emerald-50 text-4xl">
             {product.image || product.categoryIcon || "🛒"}
           </div>
-
           <div className="min-w-0 flex-1">
             <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
               {product.nameBn}
@@ -177,7 +220,6 @@ export default function ProductDetailsPage() {
             <p className="mt-2 text-gray-500">
               আজকের দাম: {toBn(product.today)} টাকা — {unitName}
             </p>
-
             <div className="mt-3 flex flex-wrap gap-2">
               <span className="rounded-full bg-emerald-50 px-3 py-1 text-sm text-emerald-700">
                 {product.categoryNameBn}
@@ -194,7 +236,6 @@ export default function ProductDetailsPage() {
         <h2 className="mb-4 text-xl font-bold text-gray-900">
           দামের সারসংক্ষেপ
         </h2>
-
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <div className="rounded-xl border border-gray-200 bg-white p-5">
             <p className="text-sm text-gray-500">সর্বনিম্ন দাম</p>
@@ -202,14 +243,12 @@ export default function ProductDetailsPage() {
               {toBn(minPrice)} টাকা
             </p>
           </div>
-
           <div className="rounded-xl border border-gray-200 bg-white p-5">
             <p className="text-sm text-gray-500">সর্বোচ্চ দাম</p>
             <p className="mt-2 text-2xl font-bold text-rose-600">
               {toBn(maxPrice)} টাকা
             </p>
           </div>
-
           <div className="rounded-xl border border-gray-200 bg-white p-5">
             <p className="text-sm text-gray-500">গড় দাম</p>
             <p className="mt-2 text-2xl font-bold text-gray-900">
