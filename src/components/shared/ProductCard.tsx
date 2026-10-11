@@ -72,7 +72,8 @@ export default function ProductCard({ product }: ProductCardProps) {
         <span
           className={`rounded-full px-3 py-1 text-xs font-semibold ${badgeColor}`}
         >
-          {arrow} {toBn(product.change?.pct ?? 0)}%
+                      {arrow} {toBn(product.change?.pct ?? 0)}%
+
         </span>
       </div>
 
